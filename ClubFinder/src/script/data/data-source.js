@@ -1,18 +1,19 @@
-import clubs from "./clubs.js";
-
 class DataSource {
-  static searchClub(keyword) {
-    return new Promise((resolve, reject) => {
-      const filteredClubs = clubs.filter((club) =>
-        club.name.toUpperCase().includes(keyword.toUpperCase())
+  static async searchClub(keyword) {
+    try {
+      const res = await fetch(
+        `https://sports-api.dicoding.dev/teams/search?t=${keyword}`
       );
+      const data = await res.json();
 
-      if (filteredClubs.length) {
-        resolve(filteredClubs);
+      if (data.teams.length === 0) {
+        return Promise.reject(`${keyword} is not found`);
       } else {
-        reject(`${keyword} is not found`);
+        return Promise.resolve(data.teams);
       }
-    });
+    } catch (rejectMessage) {
+      return Promise.reject(rejectMessage);
+    }
   }
 }
 
